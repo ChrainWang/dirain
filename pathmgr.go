@@ -4,10 +4,6 @@ import (
 	"unicode"
 )
 
-const (
-	ILLEGAL_PATH_ERR_MSG string = "[ILLEGAL PATH]Illegal character %"
-)
-
 type PathExpander struct {
 	rawPath  []byte
 	start    int
@@ -76,7 +72,6 @@ func (self *PathExpander) checkPrefix() error {
 		if cwd, err := CWD(); err == nil {
 			self.resultPath = make([]byte, 0, self.rpLength+len(cwd)+1)
 			self.resultPath = append(self.resultPath, []byte(cwd)...)
-			self.resultPath = append(self.resultPath, '/')
 			self.resultPointer = len(self.resultPath)
 		} else {
 			return nil
@@ -149,7 +144,12 @@ func (self *PathExpander) extractNodeBeginWithDot() error {
 		} else {
 			return self.newIllegalPathErr()
 		}
+	} else if r == '/' {
+		self.start = self.end
+		return self.extractNode()
 	} else if unicode.IsDigit(r) || unicode.IsLetter(r) {
+		self.resultPath = append(self.resultPath, '/')
+		self.resultPointer += 1
 		return self.extractNode()
 	} else {
 		return self.newIllegalPathErr()
