@@ -1,3 +1,3 @@
-module github.com/chrainwang/pathmgr
+module github.com/chrainwang/dirain
 
 go 1.14
